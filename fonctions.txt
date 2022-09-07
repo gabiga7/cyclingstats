@@ -1,0 +1,31 @@
+
+
+a/ln(x) + b*ln(x) + c
+a determine la pente quand x est petit
+b determine la pente quand x est grand
+c determine la valeur que x atteindra en x=3600
+
+
+
+degPunch : entre 1 et 5 (+ grand <=> + de punch et moins de clm)
+degLiss : entre 1 et 5 (+ grand <=> + de clm et moins de punch)
+
+
+polyvalent : 
+(1800)/ln(x) + (15)*ln(x) + (ftp-342)
+
+
+
+
+plus puncher :
+(1800+(degPunch*50))/ln(x) + (15-(degPunch))*ln(x) + (ftp-342)
+
+
+
+
+plus lisseur :
+(1800-(degPunch*2.5))/ln(x) + (15+(degPunch*0.5))*ln(x) + (ftp-342)
+
+
+
+
