@@ -2,15 +2,15 @@ import time
 import numpy as np
 
 
-def ajustement_depense_bj(ftp,puissance,depense):
+def ajustement_depense_bj(ftp,puissance,depense):#function to reduce impact of a short effort on the endurance
     #print(1-1/(np.exp(duree_tenable(ftp,puissance)/(ftp/3))))
     return depense*(1-1/(np.exp(duree_tenable(ftp,puissance)/(ftp/3))))
 
 
-def puissance_tenable(ftp,temps):
+def puissance_tenable(ftp,temps):#function that computes the power that can be maintainable for $temps seconds with a ftp of $ftp, according to the secret function
     return 1900/np.log(temps)+15*np.log(temps)+ftp-354.858
 
-def duree_tenable(ftp,puissance):
+def duree_tenable(ftp,puissance):#function that computes the duration a cyclist can hold with $puissance with a ftp of $ftp, according to the secret function
     prec=puissance_tenable(ftp,2)
     for i in range(3,7200):
         act=puissance_tenable(ftp,i)
@@ -22,7 +22,7 @@ def duree_tenable(ftp,puissance):
 
 
 
-def depense_puissance_duree_bj(ftp,puissance,temps):
+def depense_puissance_duree_bj(ftp,puissance,temps):#function that computes the spent energy of the yellow bar for a given power and duration
     if puissance<=0.55*ftp:
          return -temps*0.02
     if puissance<=0.75*ftp:
@@ -35,7 +35,7 @@ def depense_puissance_duree_bj(ftp,puissance,temps):
         return temps*ajustement_depense_bj(ftp,puissance,depense)
     return depense
 
-def depense_puissance_duree_br(ftp,puissance,temps):
+def depense_puissance_duree_br(ftp,puissance,temps):#function that computes the spent energy of the red bar for a given power and duration
     if puissance<=0.9*ftp:
         return -temps*0.083
     if puissance>=1.1*ftp:
@@ -59,7 +59,7 @@ dpd=depense_puissance_duree_br(ftp=300,puissance=200,temps=1)
 #print("~~~~~~~~~~~~")
 print()
 
-
+#sequence of a possible race
 bloc_1=[150]*30
 bloc_2=[350]*30
 bloc_3=[300]*30
@@ -79,14 +79,14 @@ bloc_16=[800]*5
 bloc_17=[1100]*3
 
 
-def ajustement_energie_bj(energie_bj,depense):
+def ajustement_energie_bj(energie_bj,depense):#new value of yellow bar with the spent energy
     if energie_bj-depense>100:
         return 100
     if energie_bj-depense<=0:
         return 0
     return energie_bj-depense
 
-def ajustement_energie_br(energie_br,depense):
+def ajustement_energie_br(energie_br,depense):#new value of red bar with the spent energy
     if energie_br-depense>100:
         return 100
     if energie_br-depense<=0:
