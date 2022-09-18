@@ -1,3 +1,13 @@
+import asyncio
+from bleak import BleakClient
+
+from pycycling.cycling_power_service import CyclingPowerService
+
+
+
+
+
+
 from cProfile import label
 import time
 from tkinter.ttk import Style
@@ -198,54 +208,48 @@ def ajustement_energie_br(energie_br,depense):
 
 
 
-def main():
-    if len(sys.argv)==1:
-        gpx=[]
-        gpx+=(bloc_1)
-        gpx+(bloc_2)
-        gpx+=(bloc_3)
-        gpx+=(bloc_4)
-        gpx+=(bloc_5)
-        gpx+=(bloc_6)
-        gpx+=(bloc_7)
-        gpx+=(bloc_8)
-        gpx+=(bloc_9)
-        gpx+=(bloc_10)
-        gpx+=(bloc_11)
-        gpx+=(bloc_12)
-        gpx+=(bloc_13)
-        gpx+=(bloc_14)
-        gpx+=(bloc_15)
-        gpx+=(bloc_16)
-        gpx+=(bloc_17)
-    else:
-        gpx=get_power_list(sys.argv[1],get_extension(sys.argv[1]))
-
-    energie_bj=100
-    energie_br=100
-    histo_bj=[]
-    histo_br=[]
-    print(len(gpx),"sec")
-    sec=0
-    for i in gpx:
-        energie_bj=ajustement_energie_bj(energie_bj,depense_puissance_duree_bj(ftp=277,puissance=i,temps=1))
-        energie_br=ajustement_energie_br(energie_br,depense_puissance_duree_br(ftp=277,puissance=i,temps=1))
-        histo_bj.append(energie_bj)
-        histo_br.append(energie_br)
-        #if energie_bj==0:
-            #print("Vous avez besoin de récupérer de la barre jaune")
-        #if energie_br==0:
-            #print("Vous avez besoin de récupérer de la barre rouge")
-        #print("~~")
-        #print(sec,"sec")
-        #print(i,"w")
-        #print("barre jaune : ",energie_bj,"pv")
-        #print("barre rouge : ",energie_br,"pv")
-
-        sec+=1
-        #time.sleep(0.1)
-    print("computations ok, graphics in preparation")
-    main_plot(gpx,histo_bj,histo_br)
     
 
-main()
+
+
+
+
+
+
+
+energie_bj=100
+
+async def run(address):
+    async with BleakClient(address) as client:
+        def my_measurement_handler(data):
+            print(data[0])
+            global energie_bj
+            energie_bj=ajustement_energie_bj(energie_bj,depense_puissance_duree_bj(ftp=150,puissance=data[0],temps=1))
+            num_lines = len(open("tmp_bj.txt").readlines(  ))
+            f = open("tmp_bj.txt", "a")
+            f.write(str(num_lines)+","+str(energie_bj)+"\n")
+            f.close()
+            global energie_br
+            energie_br=ajustement_energie_br(energie_br,depense_puissance_duree_br(ftp=150,puissance=data[0],temps=1))
+            num_lines = len(open("tmp_br.txt").readlines(  ))
+            f = open("tmp_br.txt", "a")
+            f.write(str(num_lines)+","+str(energie_br)+"\n")
+            f.close()
+
+
+        await client.is_connected()
+        trainer = CyclingPowerService(client)
+        trainer.set_cycling_power_measurement_handler(my_measurement_handler)
+        await trainer.enable_cycling_power_measurement_notifications()
+        await asyncio.sleep(300.0)
+        await trainer.disable_cycling_power_measurement_notifications()
+
+
+if __name__ == "__main__":
+    import os
+
+    os.environ["PYTHONASYNCIODEBUG"] = str(1)
+
+    device_address = "7D:06:39:34:D8:21"
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(run(device_address))
