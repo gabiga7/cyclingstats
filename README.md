@@ -66,4 +66,4 @@ python computation.py path_to_your_file.gpx
 
 Remember that these interpretations are based on the constants provided and the mathematical models used. For more specific or tailored analyses, consult an expert in exercise physiology or a professional cycling coach.
 
-By Gabriel Quint
+By gabiga7
