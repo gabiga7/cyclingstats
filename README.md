@@ -1,40 +1,40 @@
-# README : Power Analysis Tool pour Cyclistes
+# Power Analysis Tool for Cyclists
 
-## Explication scientifique des équations
+## Scientific explanation of the equations
 
-La formule principale derrière cet outil est basée sur une combinaison de fonctions logarithmiques : 
+The main formula behind this tool is based on a combination of logarithmic functions: 
 f(x) = a/ln(x) + b * ln(x) + c
 
-La combinaison d'une division par un logarithme et d'une multiplication par un logarithme crée un modèle qui peut décrire la manière dont la puissance d'un cycliste évolue pendant des efforts de différentes durées.
+The combination of division by a logarithm and multiplication by a logarithm creates a model that can describe how a cyclist's power evolves during efforts of different durations.
 
-N.B : Cette equation est basée sur des observations de différents profils cyclistes sur différentes epreuves.
+N.B : This equation is based on observations of different cyclist profiles in different events.
 
-## Utilisation des scripts
+## Using the scripts
 
 ### `auto.py`
 
-Ce script est un analyseur en direct qui utilise la connectivité Bluetooth pour recevoir et traiter les données de puissance en temps réel.
+This script is a live analyser that uses Bluetooth connectivity to receive and process power data in real time.
 
-#### Comment l'utiliser :
+#### How to use it :
 
-1. Assurez-vous que votre appareil Bluetooth est correctement configuré et jumelé avec la source de données.
-2. Exécutez le script : 
+1. Ensure that your Bluetooth device is correctly configured and paired with the data source.
+2. Run the script : 
 python auto.py
-3. Suivez les instructions à l'écran pour démarrer l'analyse en direct.
+3. Follow the on-screen instructions to start the live analysis.
 
 ### `computation.py`
 
-Ce script analyse les données de puissance à partir de fichiers `.gpx` ou `.tcx`.
+This script analyses power data from `.gpx` or `.tcx` files.
 
-#### Comment l'utiliser :
+#### How to use it :
 
-1. Préparez votre fichier `.gpx` ou `.tcx` contenant les données de puissance.
-2. Exécutez le script en fournissant le fichier comme argument :
-python computation.py chemin_vers_votre_fichier.gpx
-3. Le script traitera les données et fournira une analyse détaillée basée sur la formule ci-dessus.
+1. Prepare your `.gpx` or `.tcx` file containing the power data.
+2. Run the script, supplying the file as an argument:
+python computation.py path_to_your_file.gpx
+3. The script will process the data and provide a detailed analysis based on the formula above.
 
 ---
 
-N'oubliez pas que ces interprétations sont basées sur les constantes fournies et les modèles mathématiques utilisés. Pour des analyses plus spécifiques ou adaptées, consultez un expert en physiologie de l'exercice ou un entraîneur cycliste professionnel.
+Remember that these interpretations are based on the constants provided and the mathematical models used. For more specific or tailored analyses, consult an expert in exercise physiology or a professional cycling coach.
 
 By Gabriel Quint
