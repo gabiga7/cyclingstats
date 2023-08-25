@@ -1,64 +1,40 @@
-from cProfile import label
-import time
-from tkinter.ttk import Style
-from turtle import width
-import numpy as np
-
+import os
+import re
 import sys
-
-
-
-from ast import main
+import numpy as np
 import matplotlib.pyplot as plt
 
-import re
-
-import os
-
-
 def get_extension(filename):
-    split_tup = os.path.splitext(filename)
-    return split_tup[1]
+    """Get the file extension from the filename."""
+    return os.path.splitext(filename)[1]
 
+def get_power_list(filename):
+    """Extract power data from a given file based on its extension."""
+    extension = get_extension(filename)
+    pattern = {
+        '.tcx': r'\s+<ns3:Watts>(\d+.\d+)',
+        '.gpx': r'\s+<power>(\d+.\d+)'
+    }.get(extension, None)
 
-def get_power_list(filename,extension):
-    list=[]
-    print(extension)
-    if extension==".tcx":
-        balise='\s+<ns3:Watts>(\d+.\d+)'
-    elif extension==".gpx":
-        balise='\s+<power>(\d+.\d+)'
-    else:
-        exit(-1)
-    print("test")
+    if not pattern:
+        sys.exit("Invalid file extension. Please provide either .gpx or .tcx file.")
+
+    power_list = []
     with open(filename, 'rt') as f:
         for line in f:
-            #print(line),
-            match = re.match(balise,line)
+            match = re.match(pattern, line)
             if match:
-                power_in_watt = float(match.group(1))
-                #print (power_in_watt)
-                list.append(power_in_watt)      
-    return list
+                power_list.append(float(match.group(1)))
+
+    return power_list
 
 def readable_power_data(data):
-    to_add=0
-    readable=[]
-    for i in range(len(data)):
-        to_add+=data[i]
-        if i%60==0:
-            for i in range(60):
-                readable.append(to_add/60)
-            to_add=0
-    return readable
+    """Convert raw power data to a more readable form."""
+    return [sum(data[i:i+60])/60 for i in range(0, len(data), 60)]
 
-
-
-
-
-def create_line(array,line_type):
-
-    plt.plot(array, "-b",color=line_type,linewidth=2)
+def create_line(array, line_type):
+    """Plot a line with given data and line type."""
+    plt.plot(array, "-b", color=line_type, linewidth=2)
     plt.xticks(rotation=60)
 
 
@@ -199,53 +175,24 @@ def ajustement_energie_br(energie_br,depense):
 
 
 def main():
-    if len(sys.argv)==1:
-        gpx=[]
-        gpx+=(bloc_1)
-        gpx+(bloc_2)
-        gpx+=(bloc_3)
-        gpx+=(bloc_4)
-        gpx+=(bloc_5)
-        gpx+=(bloc_6)
-        gpx+=(bloc_7)
-        gpx+=(bloc_8)
-        gpx+=(bloc_9)
-        gpx+=(bloc_10)
-        gpx+=(bloc_11)
-        gpx+=(bloc_12)
-        gpx+=(bloc_13)
-        gpx+=(bloc_14)
-        gpx+=(bloc_15)
-        gpx+=(bloc_16)
-        gpx+=(bloc_17)
-    else:
-        gpx=get_power_list(sys.argv[1],get_extension(sys.argv[1]))
+    # Check command line arguments
+    if len(sys.argv) != 2:
+        sys.exit("Usage: script_name.py <path_to_gpx_or_tcx_file>")
 
-    energie_bj=100
-    energie_br=100
-    histo_bj=[]
-    histo_br=[]
-    print(len(gpx),"sec")
-    sec=0
-    for i in gpx:
-        energie_bj=ajustement_energie_bj(energie_bj,depense_puissance_duree_bj(ftp=277,puissance=i,temps=1))
-        energie_br=ajustement_energie_br(energie_br,depense_puissance_duree_br(ftp=277,puissance=i,temps=1))
+    # Extract power data from the file
+    gpx = get_power_list(sys.argv[1])
+
+    energie_bj, energie_br = 100, 100
+    histo_bj, histo_br = [], []
+
+    for power in gpx:
+        energie_bj = ajustement_energie_bj(energie_bj, depense_puissance_duree_bj(ftp=277, puissance=power, temps=1))
+        energie_br = ajustement_energie_br(energie_br, depense_puissance_duree_br(ftp=277, puissance=power, temps=1))
         histo_bj.append(energie_bj)
         histo_br.append(energie_br)
-        #if energie_bj==0:
-            #print("Vous avez besoin de récupérer de la barre jaune")
-        #if energie_br==0:
-            #print("Vous avez besoin de récupérer de la barre rouge")
-        #print("~~")
-        #print(sec,"sec")
-        #print(i,"w")
-        #print("barre jaune : ",energie_bj,"pv")
-        #print("barre rouge : ",energie_br,"pv")
 
-        sec+=1
-        #time.sleep(0.1)
-    print("computations ok, graphics in preparation")
-    main_plot(gpx,histo_bj,histo_br)
-    
+    print("Computations ok, graphics in preparation.")
+    main_plot(gpx, histo_bj, histo_br)
 
-main()
+if __name__ == "__main__":
+    main()
