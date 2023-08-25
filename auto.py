@@ -1,16 +1,36 @@
-from ast import arg
-from sys import stdout
 import numpy as np
-from bleak import BleakClient
+from tkinter import Tk, Label, Entry, Button, ttk, IntVar, Scale, HORIZONTAL
 import asyncio
-from tkinter import Tk, Label, Entry, Button, Radiobutton, IntVar
-import os
+from bleak import BleakClient, BleakScanner
 from pycycling.cycling_power_service import CyclingPowerService
 import threading
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-import asyncio
-from bleak import BleakScanner
+import os
+
+
+# Cyclist related functions and classes
+class Cyclist:
+    def __init__(self, ftp, fthr, pma, age, imc, profile, bj, br, device):
+        self.ftp = int(ftp)
+        self.fthr = int(fthr)
+        self.pma = int(pma)
+        self.age = int(age)
+        self.imc = float(imc)
+        self.profile = int(profile)
+        self.bj = float(bj)
+        self.br = float(br)
+        self.device = str(device)
+
+    def update_bj(self):
+        power = get_power("tmp_power.txt")
+        depense = depense_puissance_duree_bj(power, 1, self)
+        self.bj = max(0, min(self.bj - depense, 100))
+
+    def update_br(self):
+        power = get_power("tmp_power.txt")
+        depense = depense_puissance_duree_br(power, 1, self)
+        self.br = max(0, min(self.br - depense, 100))
 
 
 devices=[]
@@ -74,42 +94,6 @@ def get_power(filename="tmp_power.txt"):
     if data==[] or data==['']:
         return 0
     return int(data[-1])
-
-
-    
-
-
-class Cyclist:
-    """this class is used to create a cyclist object"""
-    def __init__(self, ftp, fthr, pma, age, imc, profile, bj, br, device):
-        self.ftp = int(ftp)
-        self.fthr = int(fthr)
-        self.pma = int(pma)
-        self.age = int(age)
-        self.imc = float(imc)
-        self.profile = int(profile)
-        self.bj = float(bj)
-        self.br = float(br)
-        self.device = str(device)
-    
-    def update_bj(self):
-        power=get_power("tmp_power.txt")
-        depense=depense_puissance_duree_bj(power,1,self)
-        if self.bj-depense>100:
-            self.bj=100
-        if self.bj-depense<=0:
-            self.bj=0
-        self.bj=self.bj-depense
-
-    def update_br(self):
-        power=get_power("tmp_power.txt")
-        depense=depense_puissance_duree_br(power,1,self)
-        if self.br-depense>100:
-            self.br=100
-        if self.br-depense<=0:
-            self.br=0
-        self.br=self.br-depense
-
 
 
 
