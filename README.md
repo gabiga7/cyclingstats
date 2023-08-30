@@ -40,7 +40,7 @@ N.B : This equation is based on observations of different cyclist profiles in di
 
 ## Using the scripts
 
-### `auto.py`
+### `live_analyzer.py`
 
 This script is a live analyser that uses Bluetooth connectivity to receive and process power data in real time.
 
@@ -48,7 +48,7 @@ This script is a live analyser that uses Bluetooth connectivity to receive and p
 
 1. Ensure that your Bluetooth device is correctly configured and paired with the data source.
 2. Run the script : 
-python auto.py
+python live_analyzer.py
 3. Follow the on-screen instructions to start the live analysis.
 
 ### `computation.py`
